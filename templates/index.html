@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Phát hiện rác bằng camera</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="camera-container">
+    <img src="{{ url_for('video_feed') }}" class="camera-feed" alt="Camera Feed">
+
+    <!-- Góc trái trên: lịch sử -->
+    <div class="history-box">
+      <h2>Lịch sử phát hiện</h2>
+      <ul>
+        {% for time, label in history|reverse %}
+          <li>{{ time }} - {{ label }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Góc phải dưới: nút điều khiển -->
+    <div class="control-panel">
+      <a href="/export" class="control-button">📥 Tải Excel</a>
+      <a href="/clear" class="control-button">🗑 Xóa lịch sử</a>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
