@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Results</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .model-info {
+            font-size: 1.1rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .results-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .image-container {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .image-container h2 {
+            margin-top: 0;
+            color: #6a11cb;
+            border-bottom: 2px solid #f0f4ff;
+            padding-bottom: 10px;
+        }
+
+        .image-wrapper {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .result-image {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .detections-container {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .detections-container h2 {
+            margin-top: 0;
+            color: #00b09b;
+            border-bottom: 2px solid #f0f4ff;
+            padding-bottom: 10px;
+        }
+
+        .detection-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f9ff;
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #6a11cb;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .detection-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .detection-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .detection-item:last-child {
+            border-bottom: none;
+        }
+
+        .detection-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .detection-info {
+            flex: 1;
+        }
+
+        .detection-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .detection-confidence {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .detection-bbox {
+            color: #666;
+            font-size: 0.9rem;
+            font-family: monospace;
+        }
+
+        .actions {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .btn-detect {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-detect:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(106, 17, 203, 0.3);
+        }
+
+        .btn-back {
+            background: white;
+            color: #6a11cb;
+            border: 2px solid #6a11cb;
+        }
+
+        .btn-back:hover {
+            background: #f0f4ff;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(106, 17, 203, 0.1);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Detection Results</h1>
+            <p class="model-info">Using model: <strong>{{ model_name }}</strong></p>
+        </header>
+
+        <div class="results-container">
+            <div class="image-container">
+                <h2>Original Image</h2>
+                <div class="image-wrapper">
+                    <img src="{{ original_image }}" alt="Original Image" class="result-image">
+                </div>
+            </div>
+
+            <div class="image-container">
+                <h2>Detection Results</h2>
+                <div class="image-wrapper">
+                    <img src="{{ annotated_image }}" alt="Detection Results" class="result-image">
+                </div>
+            </div>
+
+            <div class="detections-container">
+                <h2>Detected Objects</h2>
+
+                <div class="detection-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ detections|length }}</div>
+                        <div class="stat-label">Objects Found</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">
+                            {% if detections %}
+                            {{ (detections|map(attribute='confidence')|max * 100)|round(1) }}%
+                            {% else %}
+                            0%
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">Max Confidence</div>
+                    </div>
+                </div>
+
+                <div class="detection-list">
+                    {% if detections %}
+                    {% for detection in detections %}
+                    <div class="detection-item">
+<div class="detection-color" data-color="{{ detection.color }}"></div>
+                        <div class="detection-info">
+                            <div class="detection-label">{{ detection.label|capitalize }}</div>
+                            <div class="detection-confidence">
+                                Confidence: {{ (detection.confidence * 100)|round(1) }}%
+                            </div>
+                            <div class="detection-bbox">
+                                BBox: [
+                                {{ detection.bbox[0]|round }},
+                                {{ detection.bbox[1]|round }},
+                                {{ detection.bbox[2]|round }},
+                                {{ detection.bbox[3]|round }}
+                                ]
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="detection-item">
+                        <div class="detection-info">
+                            <div class="detection-label">No objects detected</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/upload" class="btn btn-detect">Detect Another Image</a>
+            <a href="/" class="btn btn-back">Back to Live Detection</a>
+        </div>
+
+        <footer>
+            <p>Trash Detection System &copy; 2023</p>
+        </footer>
+    </div>
+</body>
+
+</html>
